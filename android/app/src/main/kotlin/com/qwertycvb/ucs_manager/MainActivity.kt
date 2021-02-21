@@ -1,0 +1,6 @@
+package com.qwertycvb.ucs_manager
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
