@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -12,7 +13,16 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
+  bool isDarkMode = false;
+
   TextEditingController _textFieldController = TextEditingController();
+
+  @override
+  void initState() {
+    var brightness = SchedulerBinding.instance.window.platformBrightness;
+    isDarkMode = brightness == Brightness.dark;
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -154,7 +164,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
         ),
         floatingActionButton: SpeedDial(
           marginEnd: 18,
-          marginBottom: 20,
+          marginBottom: 30,
           // animatedIcon: AnimatedIcons.menu_close,
           // animatedIconTheme: IconThemeData(size: 22.0),
           icon: Icons.menu,
@@ -183,15 +193,15 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           //onClose: () => print('DIAL CLOSED'),
           tooltip: 'Speed Dial',
           heroTag: 'speed-dial-hero-tag',
-          backgroundColor: Colors.black38,
-          foregroundColor: Colors.white,
+          backgroundColor: (isDarkMode) ? Colors.white : Colors.black54,
+          foregroundColor: (isDarkMode) ? Colors.black54 : Colors.white,
           elevation: 8.0,
           shape: CircleBorder(),
           children: [
             SpeedDialChild(
               child: Icon(Icons.add),
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
               label: 'Add UCS',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () {
@@ -200,7 +210,8 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             ),
             SpeedDialChild(
               child: Icon(Icons.search),
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
               label: 'Search UCS',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () {
@@ -214,7 +225,8 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             ),
             SpeedDialChild(
               child: Icon(Icons.build),
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
               label: 'Build UCS Pack',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () {
@@ -224,6 +236,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             SpeedDialChild(
               child: Icon(Icons.delete_forever),
               backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
               label: 'Remove All UCS',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () {
