@@ -189,129 +189,133 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
         backgroundColor: Color(0xFF398AE5),
         title: Text('Search UCS'),
       ),
-      body: Center(
-        child: Container(
-          child: Column(
-            children: [
-              SizedBox(height: 5.0),
-              Container(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(
-                      color: Colors.grey.withOpacity(0.2),
-                      width: 1,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Center(
+          child: Container(
+            child: Column(
+              children: [
+                SizedBox(height: 5.0),
+                Container(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1,
+                      ),
                     ),
-                  ),
-                  child: TextField(
-                    controller: _songTitleController,
-                    decoration: InputDecoration(
-                      hintText: "Song Title",
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(14.0),
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(
-                      color: Colors.grey.withOpacity(0.2),
-                      width: 1,
-                    ),
-                  ),
-                  child: TextField(
-                    controller: _stepArtistController,
-                    decoration: InputDecoration(
-                      hintText: "Step Artist",
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(14.0),
+                    child: TextField(
+                      controller: _songTitleController,
+                      decoration: InputDecoration(
+                        hintText: "Song Title",
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(14.0),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Container(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(
-                      color: Colors.grey.withOpacity(0.2),
-                      width: 1,
+                Container(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1,
+                      ),
                     ),
-                  ),
-                  child: TextField(
-                    controller: _stepLvController,
-                    decoration: InputDecoration(
-                      hintText: "Step Level",
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(14.0),
+                    child: TextField(
+                      controller: _stepArtistController,
+                      decoration: InputDecoration(
+                        hintText: "Step Artist",
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(14.0),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              ElevatedButton(
-                child: Text(searchButtonText),
-                onPressed: () async {
-                  if (_songTitleController.text.length > 2 ||
-                      _stepArtistController.text != '') {
-                      if (searchButtonEnabled) {
-                        searchButtonEnabled = false;
-                        searchButtonText = 'Searching...';
-                        setState(() {});
-                        await searchUCSList(_songTitleController.text,
-                            _stepArtistController.text, _stepLvController.text);
+                Container(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _stepLvController,
+                      decoration: InputDecoration(
+                        hintText: "Step Level",
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(14.0),
+                      ),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  child: Text(searchButtonText),
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus();
+                    if (_songTitleController.text.length > 2 ||
+                        _stepArtistController.text != '') {
+                        if (searchButtonEnabled) {
+                          searchButtonEnabled = false;
+                          searchButtonText = 'Searching...';
+                          setState(() {});
+                          await searchUCSList(_songTitleController.text,
+                              _stepArtistController.text, _stepLvController.text);
+                        } else {
+                          alertMessage(context, 'Error!',
+                              'Your search process is already in progress.\nPlease Wait.');
+                        }
                       } else {
                         alertMessage(context, 'Error!',
-                            'Your search process is already in progress.\nPlease Wait.');
-                      }
-                    } else {
-                      alertMessage(context, 'Error!',
-                          'You must Enter\nSong Title more than 3 letters\nOR Full Step Artist Name.');
+                            'You must Enter\nSong Title more than 3 letters\nOR Full Step Artist Name.');
+                    }
                   }
-                }
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: songTitleList.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
-                          color: Colors.grey.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          addUCSAlert(context, index);
-                        },
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(height: 5.0),
-                            Text(
-                              ucsNoList[index],
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              '${songTitleList[index]} ${stepLvList[index]}',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              '${stepArtistList[index]}',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            SizedBox(height: 5.0),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
                 ),
-              ),
-            ],
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: songTitleList.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                            color: Colors.grey.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            addUCSAlert(context, index);
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 5.0),
+                              Text(
+                                ucsNoList[index],
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                '${songTitleList[index]} ${stepLvList[index]}',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                '${stepArtistList[index]}',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              SizedBox(height: 5.0),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
