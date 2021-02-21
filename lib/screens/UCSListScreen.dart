@@ -64,7 +64,6 @@ class _UCSListScreen extends State<UCSListScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
       child: Center(
         child: FutureBuilder(
           future: getUCSList(),
