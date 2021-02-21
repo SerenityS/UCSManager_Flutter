@@ -119,7 +119,8 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             context: context,
             builder: (context) {
               return AlertDialog(
-                content: Text('Are You Sure Want to to Exit?'),
+                title: Text('Exit?'),
+                content: Text('Are You Sure Want to Exit?'),
                 actions: <Widget>[
                   TextButton(
                     child: Text('NO'),

@@ -285,7 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 100.0,
                       ),
                       Text(
-                        'UCS Manager Login',
+                        'Login to UCS Manager',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'OpenSans',

@@ -93,9 +93,14 @@ class _UCSListScreen extends State<UCSListScreen> {
                   SizedBox(
                     child: Align(
                       alignment: FractionalOffset.bottomCenter,
-                      child: Text(
-                        "Made by qwertycvb with Pump It Up Gallery.",
-                        style: TextStyle(fontSize: 15),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Made by qwertycvb with Pump It Up Gallery.",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(height: 8.0),
+                        ],
                       ),
                     ),
                   ),
