@@ -63,8 +63,14 @@ android {
             useProguard true
 
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
+
+    ndkVersion "23.0.7123448"
 }
 
 flutter {
