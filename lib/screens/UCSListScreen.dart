@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,10 +49,23 @@ class _UCSListScreen extends State<UCSListScreen> {
             TextButton(
               child: Text("YES"),
               onPressed: () async {
-                await PIUApi().removeUCS(index);
+                var result = await PIUApi().removeUCS(index);
                 setState(() {
                   getUCSList();
                 });
+                print(result);
+                if (result.contains('The file was deleted.')) {
+                  Fluttertoast.showToast(
+                    msg: "Successfully Remove UCS.",
+                    toastLength: Toast.LENGTH_SHORT,
+                  );
+                }
+                else {
+                  Fluttertoast.showToast(
+                    msg: "Error! - Can't Remove UCS.",
+                    toastLength: Toast.LENGTH_SHORT,
+                  );
+                }
                 Navigator.of(context).pop();
               },
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
@@ -48,7 +49,20 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
             TextButton(
                 child: Text("YES"),
                 onPressed: () async {
-                  await PIUApi().addUCS(ucsNoList[index]);
+                  var result = await PIUApi().addUCS(ucsNoList[index]);
+                  if (result.contains('Registration is complete.'))
+                  {
+                    Fluttertoast.showToast(
+                      msg: "Successfully Add UCS - ${ucsNoList[index]}.",
+                      toastLength: Toast.LENGTH_SHORT,
+                    );
+                  }
+                  else {
+                    Fluttertoast.showToast(
+                      msg: "Failure to Add UCS - ${ucsNoList[index]}.",
+                      toastLength: Toast.LENGTH_SHORT,
+                    );
+                  }
                   Navigator.pop(context);
                 }),
           ],

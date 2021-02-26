@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:ucs_manager/screens/SearchUCSScreen.dart';
 import 'package:ucs_manager/utilties/PIUApi.dart';
@@ -53,10 +54,23 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             TextButton(
               child: Text('OK'),
               onPressed: () async {
-                await PIUApi().addUCS(_textFieldController.text);
+                var result = await PIUApi().addUCS(_textFieldController.text);
                 setState(() {
                   UCSListScreen();
                 });
+                if (result.contains('Registration is complete.'))
+                  {
+                    Fluttertoast.showToast(
+                      msg: "Successfully Add UCS - ${_textFieldController.text}.",
+                      toastLength: Toast.LENGTH_SHORT,
+                    );
+                  }
+                else if (result.contains('SOURCE ERROR')) {
+                  Fluttertoast.showToast(
+                    msg: "UCS Number is Wrong - ${_textFieldController.text}.",
+                    toastLength: Toast.LENGTH_SHORT,
+                  );
+                }
                 Navigator.pop(context);
               },
             ),
@@ -83,7 +97,20 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             TextButton(
                 child: Text("YES"),
                 onPressed: () async {
-                  await PIUApi().buildUCS();
+                  var result = await PIUApi().buildUCS();
+                  if (result.contains('Registration is complete.'))
+                  {
+                    Fluttertoast.showToast(
+                      msg: "Successfully Build UCS Pack.",
+                      toastLength: Toast.LENGTH_SHORT,
+                    );
+                  }
+                  else {
+                    Fluttertoast.showToast(
+                      msg: "You Can not Build when do not have any UCS.",
+                      toastLength: Toast.LENGTH_SHORT,
+                    );
+                  }
                   Navigator.pop(context);
                 }),
           ],
@@ -113,6 +140,10 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                   setState(() {
                     UCSListScreen();
                   });
+                  Fluttertoast.showToast(
+                    msg: "Successfully Remove All UCS.",
+                    toastLength: Toast.LENGTH_SHORT,
+                  );
                   Navigator.pop(context);
                 }),
           ],
