@@ -54,20 +54,26 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             TextButton(
               child: Text('OK'),
               onPressed: () async {
-                var result = await PIUApi().addUCS(_textFieldController.text);
-                setState(() {
-                  UCSListScreen();
-                });
-                if (result.contains('Registration is complete.'))
-                  {
+                var ucsNoList = _textFieldController.text.split(",");
+                var ucsAddSuccess = '';
+                for (var ucsNo in ucsNoList) {
+                  var result = await PIUApi().addUCS(ucsNo);
+                  setState(() {
+                    UCSListScreen();
+                  });
+                  if (result.contains('Registration is complete.')) {
+                    ucsAddSuccess += '$ucsNo, ';
+                  }
+                  else if (result.contains('SOURCE ERROR')) {
                     Fluttertoast.showToast(
-                      msg: "Successfully Add UCS - ${_textFieldController.text}.",
+                      msg: "UCS Number is Wrong - $ucsNo.",
                       toastLength: Toast.LENGTH_SHORT,
                     );
                   }
-                else if (result.contains('SOURCE ERROR')) {
+                }
+                if (ucsAddSuccess != '') {
                   Fluttertoast.showToast(
-                    msg: "UCS Number is Wrong - ${_textFieldController.text}.",
+                    msg: "Successfully Add UCS - ${ucsAddSuccess.substring(0, ucsAddSuccess.length - 2)}.",
                     toastLength: Toast.LENGTH_SHORT,
                   );
                 }
