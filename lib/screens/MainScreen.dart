@@ -226,11 +226,13 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           ),
           actions: [
             new IconButton(
-              icon: new Icon(Icons.logout),
+              icon: Image.asset(
+                'assets/icon/logout.png',
+                color: Colors.white,
+                scale: 1.3,
+              ),
               tooltip: 'Logout',
-              onPressed: () => {
-                logoutAlert(context)
-              },
+              onPressed: () => {logoutAlert(context)},
             )
           ],
         ),
