@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:get/get.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
+import 'package:ucs_manager/screens/LoginScreen.dart';
 import 'package:ucs_manager/screens/SearchUCSScreen.dart';
 import 'package:ucs_manager/utilties/PIUApi.dart';
 import 'UCSListScreen.dart';
@@ -13,6 +15,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
+  final _pref = GetStorage();
+
   bool isDarkMode = false;
 
   TextEditingController _textFieldController = TextEditingController();
@@ -32,6 +36,33 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
 
   void printSnackBar(msg) {
     Get.snackbar('UCS Manager', msg, colorText: Colors.white);
+  }
+
+  logoutAlert(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout'),
+          content: Text('Are You Sure Want to Logout?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text("NO"),
+              onPressed: () {
+                Get.back();
+              },
+            ),
+            TextButton(
+              child: Text("YES"),
+              onPressed: () async {
+                _pref.write('isRemember', 'false');
+                Get.offAll(() => LoginScreen());
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> addUCSAlert(BuildContext context) async {
@@ -193,6 +224,15 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           title: Text(
             'UCS Manager',
           ),
+          actions: [
+            new IconButton(
+              icon: new Icon(Icons.logout),
+              tooltip: 'Logout',
+              onPressed: () => {
+                logoutAlert(context)
+              },
+            )
+          ],
         ),
         body: Container(
           child: UCSListScreen(),
