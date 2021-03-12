@@ -27,7 +27,7 @@ dependencies:
   get:
   get_storage:
 
-  html: ^0.14.0+4
+  html: ^0.15.0
   requests: ^3.3.0
   flutter_speed_dial: ^2.1.1
 
