@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (_pref.read('isAutoLogin') == 'true') {
         setState(
-              () {
+          () {
             _isAutoLogin = true;
           },
         );
@@ -251,8 +251,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _savePref();
       Get.off(() => MainScreen());
     } else {
-      Get.snackbar('Login Failure!', 'Please Check your Email & Password.',
-          snackPosition: SnackPosition.BOTTOM);
+      if (!Get.isSnackbarOpen) {
+        Get.snackbar('Login Failure!', 'Please Check your Email & Password.',
+            snackPosition: SnackPosition.BOTTOM);
+      }
     }
   }
 
