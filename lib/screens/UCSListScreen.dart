@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:get/get.dart';
 
 import 'package:ucs_manager/utilties/PIUApi.dart';
 
@@ -11,23 +10,16 @@ class UCSListScreen extends StatefulWidget {
 }
 
 class _UCSListScreen extends State<UCSListScreen> {
-  SharedPreferences _prefs;
+  final _pref = GetStorage();
 
   List<String> songTitleList;
   List<String> stepArtistList;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   getUCSList() async {
     await PIUApi().getUCSData();
 
-    _prefs = await SharedPreferences.getInstance();
-
-    songTitleList = _prefs.getStringList('songTitleList');
-    stepArtistList = _prefs.getStringList('stepArtistList');
+    songTitleList = _pref.read('songTitleList');
+    stepArtistList = _pref.read('stepArtistList');
 
     return songTitleList.length;
   }
@@ -39,34 +31,28 @@ class _UCSListScreen extends State<UCSListScreen> {
         return AlertDialog(
           title: Text('Remove UCS'),
           content: Text("Are You Sure Want To Remove UCS?"),
-          actions: <Widget>[
+          actions: [
             TextButton(
               child: Text("NO"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Get.back();
               },
             ),
             TextButton(
               child: Text("YES"),
               onPressed: () async {
                 var result = await PIUApi().removeUCS(index);
-                setState(() {
-                  getUCSList();
-                });
-                print(result);
+                setState(
+                  () {
+                    getUCSList();
+                  },
+                );
+                Get.back();
                 if (result.contains('The file was deleted.')) {
-                  Fluttertoast.showToast(
-                    msg: "Successfully Remove UCS.",
-                    toastLength: Toast.LENGTH_SHORT,
-                  );
+                  Get.snackbar('UCS Manager', 'Successfully Remove UCS.');
+                } else {
+                  Get.snackbar('UCS Manager', 'Can\'t Remove UCS.');
                 }
-                else {
-                  Fluttertoast.showToast(
-                    msg: "Error! - Can't Remove UCS.",
-                    toastLength: Toast.LENGTH_SHORT,
-                  );
-                }
-                Navigator.of(context).pop();
               },
             ),
           ],

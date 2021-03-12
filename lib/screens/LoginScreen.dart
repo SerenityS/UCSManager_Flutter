@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:requests/requests.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:ucs_manager/utilties/constatns.dart';
 import 'package:ucs_manager/screens/MainScreen.dart';
@@ -14,9 +13,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  SharedPreferences _prefs;
+  final _pref = GetStorage();
 
-  bool _rememberMe = false;
+  bool _isAutoLogin = false;
+  bool _isRemember = false;
 
   final TextEditingController _emailController = new TextEditingController();
   final TextEditingController _pwController = new TextEditingController();
@@ -29,21 +29,30 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _loadPref() async {
-    _prefs = await SharedPreferences.getInstance();
-    if (_prefs.getBool('remember') == true) {
-      setState(() {
-        _emailController.text = _prefs.getString('email');
-        _pwController.text = _prefs.getString('pw');
-        _rememberMe = _prefs.getBool('remember');
-      });
+    if (_pref.read('isRemember') == 'true') {
+      setState(
+        () {
+          _emailController.text = _pref.read('email');
+          _pwController.text = _pref.read('pw');
+          _isRemember = true;
+        },
+      );
+      if (_pref.read('isAutoLogin') == 'true') {
+        setState(
+              () {
+            _isAutoLogin = true;
+          },
+        );
+        await getLogin();
+      }
     }
   }
 
   _savePref() async {
-    _prefs = await SharedPreferences.getInstance();
-    await _prefs.setString('email', _emailController.text);
-    await _prefs.setString('pw', _pwController.text);
-    await _prefs.setBool('remember', _rememberMe);
+    await _pref.write('email', _emailController.text);
+    await _pref.write('pw', _pwController.text);
+    await _pref.write('isAutoLogin', _isAutoLogin.toString());
+    await _pref.write('isRemember', _isRemember.toString());
   }
 
   Widget _buildIDTF() {
@@ -122,6 +131,33 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget _buildAutoLoginCheckbox() {
+    return Container(
+      height: 20.0,
+      child: Row(
+        children: <Widget>[
+          Theme(
+            data: ThemeData(unselectedWidgetColor: Colors.white),
+            child: Checkbox(
+              value: _isAutoLogin,
+              checkColor: Colors.blue,
+              activeColor: Colors.white,
+              onChanged: (value) {
+                setState(() {
+                  _isAutoLogin = value;
+                });
+              },
+            ),
+          ),
+          Text(
+            'Auto Login',
+            style: kLabelStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildRememberMeCheckbox() {
     return Container(
       height: 20.0,
@@ -130,12 +166,12 @@ class _LoginScreenState extends State<LoginScreen> {
           Theme(
             data: ThemeData(unselectedWidgetColor: Colors.white),
             child: Checkbox(
-              value: _rememberMe,
+              value: _isRemember,
               checkColor: Colors.blue,
               activeColor: Colors.white,
               onChanged: (value) {
                 setState(() {
-                  _rememberMe = value;
+                  _isRemember = value;
                 });
               },
             ),
@@ -184,27 +220,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  loginCheckAlert(context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Login Failure.'),
-          content: Text("Please Check your Email & PassWord."),
-          actions: <Widget>[
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                //Put your code here which you want to execute on No button click.
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future getLogin() async {
     String id = _emailController.text;
     String pw = _pwController.text;
@@ -234,14 +249,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (response.statusCode == 302) {
       _savePref();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MainScreen(),
-        ),
-      );
+      Get.off(() => MainScreen());
     } else {
-      loginCheckAlert(context);
+      Get.snackbar('Login Failure!', 'Please Check your Email & Password.',
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -303,6 +314,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 30.0,
                       ),
                       _buildRememberMeCheckbox(),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      _buildAutoLoginCheckbox(),
                       _buildLoginBtn(),
                       SizedBox(
                         height: 30.0,

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-
+import 'package:get/get.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:ucs_manager/screens/SearchUCSScreen.dart';
 import 'package:ucs_manager/utilties/PIUApi.dart';
@@ -31,6 +30,10 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void printSnackBar(msg) {
+    Get.snackbar('UCS Manager', msg, colorText: Colors.white);
+  }
+
   Future<void> addUCSAlert(BuildContext context) async {
     _textFieldController.clear();
     return showDialog(
@@ -46,38 +49,40 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             TextButton(
               child: Text('CANCEL'),
               onPressed: () {
-                setState(() {
-                  Navigator.pop(context);
-                });
+                Get.back();
               },
             ),
             TextButton(
               child: Text('OK'),
               onPressed: () async {
                 var ucsNoList = _textFieldController.text.split(",");
-                var ucsAddSuccess = '';
-                for (var ucsNo in ucsNoList) {
-                  var result = await PIUApi().addUCS(ucsNo);
-                  setState(() {
-                    UCSListScreen();
-                  });
-                  if (result.contains('Registration is complete.')) {
-                    ucsAddSuccess += '$ucsNo, ';
+                if (ucsNoList[0] != '') {
+                  var ucsAddSuccess = '';
+                  var ucsAddFailure = '';
+                  for (var ucsNo in ucsNoList) {
+                    var result = await PIUApi().addUCS(ucsNo);
+                    if (result.contains('Registration is complete.')) {
+                      ucsAddSuccess += '$ucsNo, ';
+                    } else if (result.contains('SOURCE ERROR')) {
+                      ucsAddFailure += '$ucsNo, ';
+                    }
                   }
-                  else if (result.contains('SOURCE ERROR')) {
-                    Fluttertoast.showToast(
-                      msg: "UCS Number is Wrong - $ucsNo.",
-                      toastLength: Toast.LENGTH_SHORT,
+                  Get.back();
+                  if (ucsAddSuccess != '') {
+                    setState(
+                      () {
+                        UCSListScreen();
+                      },
                     );
+                    printSnackBar(
+                        'Successfully Add UCS! / UCS No : ${ucsAddSuccess.substring(0, ucsAddSuccess.length - 2)}.');
+                  } else {
+                    printSnackBar(
+                        'Add UCS Failed! / UCS No : ${ucsAddFailure.substring(0, ucsAddFailure.length - 2)}.');
                   }
+                } else {
+                  Get.back();
                 }
-                if (ucsAddSuccess != '') {
-                  Fluttertoast.showToast(
-                    msg: "Successfully Add UCS - ${ucsAddSuccess.substring(0, ucsAddSuccess.length - 2)}.",
-                    toastLength: Toast.LENGTH_SHORT,
-                  );
-                }
-                Navigator.pop(context);
               },
             ),
           ],
@@ -97,28 +102,21 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             TextButton(
               child: Text("NO"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Get.back();
               },
             ),
             TextButton(
-                child: Text("YES"),
-                onPressed: () async {
-                  var result = await PIUApi().buildUCS();
-                  if (result.contains('Registration is complete.'))
-                  {
-                    Fluttertoast.showToast(
-                      msg: "Successfully Build UCS Pack.",
-                      toastLength: Toast.LENGTH_SHORT,
-                    );
-                  }
-                  else {
-                    Fluttertoast.showToast(
-                      msg: "You Can not Build when do not have any UCS.",
-                      toastLength: Toast.LENGTH_SHORT,
-                    );
-                  }
-                  Navigator.pop(context);
-                }),
+              child: Text("YES"),
+              onPressed: () async {
+                var result = await PIUApi().buildUCS();
+                Get.back();
+                if (result.contains('Registration is complete.')) {
+                  printSnackBar('Successfully Build UCS Pack.');
+                } else {
+                  printSnackBar(result);
+                }
+              },
+            ),
           ],
         );
       },
@@ -136,22 +134,26 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             TextButton(
               child: Text("NO"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Get.back();
               },
             ),
             TextButton(
-                child: Text("YES"),
-                onPressed: () async {
-                  await PIUApi().removeAllUCS();
-                  setState(() {
-                    UCSListScreen();
-                  });
-                  Fluttertoast.showToast(
-                    msg: "Successfully Remove All UCS.",
-                    toastLength: Toast.LENGTH_SHORT,
+              child: Text("YES"),
+              onPressed: () async {
+                var result = await PIUApi().removeAllUCS();
+                Get.back();
+                if (result != false) {
+                  setState(
+                    () {
+                      UCSListScreen();
+                    },
                   );
-                  Navigator.pop(context);
-                }),
+                  printSnackBar('Successfully Remove All UCS.');
+                } else {
+                  printSnackBar('You don\'t have Any UCS to Remove.');
+                }
+              },
+            ),
           ],
         );
       },
@@ -188,12 +190,8 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
       },
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
-          brightness: Brightness.dark,
-          backgroundColor: Color(0xFF398AE5),
           title: Text(
             'UCS Manager',
-            style: TextStyle(color: Colors.white),
           ),
         ),
         body: Container(
@@ -226,9 +224,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           curve: Curves.bounceIn,
           overlayColor: Colors.black,
           overlayOpacity: 0.5,
-          //onOpen: () => print('OPENING DIAL'),
-          //onClose: () => print('DIAL CLOSED'),
-          tooltip: 'Speed Dial',
+          tooltip: 'Menu',
           heroTag: 'speed-dial-hero-tag',
           backgroundColor: (isDarkMode) ? Colors.white : Colors.black54,
           foregroundColor: (isDarkMode) ? Colors.black54 : Colors.white,
@@ -252,12 +248,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               label: 'Search UCS',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchUCSScreen(),
-                  ),
-                );
+                Get.to(() => SearchUCSScreen());
               },
             ),
             SpeedDialChild(

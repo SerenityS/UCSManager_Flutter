@@ -1,26 +1,22 @@
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-
+import 'package:get_storage/get_storage.dart';
 import 'package:requests/requests.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 class PIUApi {
-  SharedPreferences _prefs;
+  final _pref = GetStorage();
 
   var apiUrl = 'http://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
   var myUcsUrl = 'http://www.piugame.com/piu.ucs/ucs.my_ucs/ucs.my_upload.php';
 
   Future _saveUCSDataPref(songTitleList, stepArtistList, ucsNoList) async {
-    _prefs = await SharedPreferences.getInstance();
-
     List<String> songTitleStringList = songTitleList.cast<String>();
     List<String> stepArtistStringList = stepArtistList.cast<String>();
     List<String> ucsNoStringList = ucsNoList.cast<String>();
 
-    await _prefs.setStringList('songTitleList', songTitleStringList);
-    await _prefs.setStringList('stepArtistList', stepArtistStringList);
-    await _prefs.setStringList('ucsNoList', ucsNoStringList);
+    await _pref.write('songTitleList', songTitleStringList);
+    await _pref.write('stepArtistList', stepArtistStringList);
+    await _pref.write('ucsNoList', ucsNoStringList);
   }
 
   Future<String> addUCS(ucsNo) async {
@@ -36,9 +32,7 @@ class PIUApi {
   }
 
   Future<String> buildUCS() async {
-    _prefs = await SharedPreferences.getInstance();
-
-    var ucsNoList = _prefs.getStringList('ucsNoList');
+    var ucsNoList = _pref.read('ucsNoList');
     if (ucsNoList.length != 0) {
       var response = await Requests.get(
         apiUrl,
@@ -48,7 +42,7 @@ class PIUApi {
       );
       return response.content();
     }
-    return 'You Can not Build when You do not have any UCS.';
+    return 'You Can\'t Build when You Don\'t have Any UCS.';
   }
 
   Future<int> getUCSData() async {
@@ -88,9 +82,7 @@ class PIUApi {
   }
 
   Future<String> removeUCS(index) async {
-    _prefs = await SharedPreferences.getInstance();
-
-    var ucsNoList = _prefs.getStringList('ucsNoList');
+    var ucsNoList = _pref.read('ucsNoList');
     var response = await Requests.get(
       apiUrl,
       queryParameters: <String, String>{
@@ -101,13 +93,11 @@ class PIUApi {
     return response.content();
   }
 
-  Future<String> removeAllUCS() async {
-    _prefs = await SharedPreferences.getInstance();
-
-    var ucsNoList = _prefs.getStringList('ucsNoList');
+  Future removeAllUCS() async {
+    var ucsNoList = _pref.read('ucsNoList');
     if (ucsNoList.length != 0) {
       for (var i = 0; i < ucsNoList.length; i++) {
-        var response = await Requests.get(
+        await Requests.get(
           apiUrl,
           queryParameters: <String, String>{
             'data_no': ucsNoList[i],
@@ -115,6 +105,8 @@ class PIUApi {
           },
         );
       }
+    } else {
+      return false;
     }
   }
 }

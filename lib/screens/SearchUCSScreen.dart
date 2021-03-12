@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:get/get.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-
 import 'package:requests/requests.dart';
 
 import 'package:ucs_manager/utilties/PIUApi.dart';
@@ -18,11 +16,6 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
   TextEditingController _songTitleController = new TextEditingController();
   TextEditingController _stepArtistController = new TextEditingController();
   TextEditingController _stepLvController = new TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -43,46 +36,21 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
             TextButton(
               child: Text("NO"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Get.back();
               },
             ),
             TextButton(
-                child: Text("YES"),
-                onPressed: () async {
-                  var result = await PIUApi().addUCS(ucsNoList[index]);
-                  if (result.contains('Registration is complete.'))
-                  {
-                    Fluttertoast.showToast(
-                      msg: "Successfully Add UCS - ${ucsNoList[index]}.",
-                      toastLength: Toast.LENGTH_SHORT,
-                    );
-                  }
-                  else {
-                    Fluttertoast.showToast(
-                      msg: "Failure to Add UCS - ${ucsNoList[index]}.",
-                      toastLength: Toast.LENGTH_SHORT,
-                    );
-                  }
-                  Navigator.pop(context);
-                }),
-          ],
-        );
-      },
-    );
-  }
-
-  alertMessage(context, title, content) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
+              child: Text("YES"),
+              onPressed: () async {
+                var result = await PIUApi().addUCS(ucsNoList[index]);
+                Get.back();
+                if (result.contains('Registration is complete.')) {
+                  Get.snackbar('UCS Manager',
+                      'Successfully Add UCS! / UCS No : ${ucsNoList[index]}.');
+                } else {
+                  Get.snackbar('UCS Manager',
+                      'Add UCS Failed! / UCS No : ${ucsNoList[index]}.');
+                }
               },
             ),
           ],
@@ -174,9 +142,12 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                 nextUrlString.substring(1, nextUrlString.length - 1);
             searchUCS('http://www.piugame.com/bbs$nextUrlString');
           } on RangeError {
-            searchButtonText = "Search";
-            searchButtonEnabled = true;
-            setState(() {});
+            setState(
+              () {
+                searchButtonText = "Search";
+                searchButtonEnabled = true;
+              },
+            );
             return ucsNoList.length;
           }
         }
@@ -186,8 +157,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
     if (songTitle.length > 2) {
       searchUCS(
           "http://www.piugame.com/bbs/board.php?bo_table=ucs&sfl=ucs_song_no&stx=$songTitle&page=");
-    }
-    else {
+    } else {
       searchUCS(
           "http://www.piugame.com/bbs/board.php?bo_table=ucs&sfl=wr_name&stx=$stepArtist&page=");
     }
@@ -199,8 +169,6 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Color(0xFF398AE5),
         title: Text('Search UCS'),
       ),
       body: GestureDetector(
@@ -273,21 +241,28 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                     FocusScope.of(context).unfocus();
                     if (_songTitleController.text.length > 2 ||
                         _stepArtistController.text != '') {
-                        if (searchButtonEnabled) {
-                          searchButtonEnabled = false;
-                          searchButtonText = 'Searching...';
-                          setState(() {});
-                          await searchUCSList(_songTitleController.text,
-                              _stepArtistController.text, _stepLvController.text);
-                        } else {
-                          alertMessage(context, 'Error!',
-                              'Your search process is already in progress.\nPlease Wait.');
-                        }
+                      if (searchButtonEnabled) {
+                        setState(
+                          () {
+                            searchButtonEnabled = false;
+                            searchButtonText = 'Searching...';
+                          },
+                        );
+                        await searchUCSList(_songTitleController.text,
+                            _stepArtistController.text, _stepLvController.text);
                       } else {
-                        alertMessage(context, 'Error!',
-                            'You must Enter\nSong Title more than 3 letters\nOR Full Step Artist Name.');
+                        if (!Get.isSnackbarOpen) {
+                          Get.snackbar('Warning!',
+                              'Your Searching Process is Already in Progress.\nPlease Wait.');
+                        }
+                      }
+                    } else {
+                      if (!Get.isSnackbarOpen) {
+                        Get.snackbar('Warning!',
+                            'You Must Enter Song Title more than 3 letters\nOr Full Step Artist Name.');
+                      }
                     }
-                  }
+                  },
                 ),
                 Expanded(
                   child: ListView.builder(
