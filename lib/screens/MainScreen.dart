@@ -56,7 +56,9 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               child: Text("YES"),
               onPressed: () async {
                 _pref.write('isRemember', 'false');
-                Get.offAll(() => LoginScreen());
+                Get.offAll(
+                  () => LoginScreen(),
+                );
               },
             ),
           ],
@@ -232,7 +234,9 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                 scale: 1.3,
               ),
               tooltip: 'Logout',
-              onPressed: () => {logoutAlert(context)},
+              onPressed: () => {
+                logoutAlert(context),
+              },
             )
           ],
         ),
@@ -290,7 +294,9 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               label: 'Search UCS',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () {
-                Get.to(() => SearchUCSScreen());
+                Get.to(
+                  () => SearchUCSScreen(),
+                );
               },
             ),
             SpeedDialChild(

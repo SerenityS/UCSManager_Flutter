@@ -232,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
         headers: <String, String>{
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept':
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+              'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
           'Accept-Encoding': "gzip, deflate",
           'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
           'Connection': 'keep-alive',
@@ -250,7 +250,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 302) {
         _savePref();
-        Get.offAll(() => MainScreen());
+        Get.offAll(
+          () => MainScreen(),
+        );
       } else {
         if (!Get.isSnackbarOpen) {
           Get.snackbar('Login Failure!', 'Please Check your Email & Password.');
