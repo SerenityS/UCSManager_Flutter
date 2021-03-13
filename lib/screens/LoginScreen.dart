@@ -250,7 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 302) {
         _savePref();
-        Get.off(() => MainScreen());
+        Get.offAll(() => MainScreen());
       } else {
         if (!Get.isSnackbarOpen) {
           Get.snackbar('Login Failure!', 'Please Check your Email & Password.');
