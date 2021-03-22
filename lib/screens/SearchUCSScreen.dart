@@ -71,13 +71,11 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
       queryParameters: {'songTitle': songTitle, 'stepMaker': stepArtist, 'songLv': stepLv},
     );
     var ucsList = ucs.json();
-    var idx = 0;
     for (var ucsData in ucsList) {
-      songTitleList.insert(idx, ucsData[1]);
-      stepArtistList.insert(idx, ucsData[4]);
-      stepLvList.insert(idx, ucsData[3]);
-      ucsNoList.insert(idx, ucsData[0].toString());
-      idx++;
+      songTitleList.insert(0, ucsData[1]);
+      stepArtistList.insert(0, ucsData[4]);
+      stepLvList.insert(0, ucsData[3]);
+      ucsNoList.insert(0, ucsData[0].toString());
     }
     searchButtonText = "Search";
     searchButtonEnabled = true;
