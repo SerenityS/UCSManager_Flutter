@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:html/parser.dart' as parser;
-import 'package:html/dom.dart' as dom;
 import 'package:requests/requests.dart';
 
 import 'package:ucs_manager/utilties/PIUApi.dart';
@@ -63,104 +61,27 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
   var stepArtistList = [];
   var stepLvList = [];
   var ucsNoList = [];
-  searchUCSList(songTitle, stepArtist, stepLv) async {
+  searchUCS(songTitle, stepArtist, stepLv) async {
     songTitleList.clear();
     stepArtistList.clear();
     stepLvList.clear();
     ucsNoList.clear();
-    searchUCS(url) async {
-      var ucs = await Requests.get(url);
-      dom.Document document = parser.parse(ucs.content());
-      var totalPage = document.getElementsByClassName('share_board_info_text');
-      totalPage = totalPage[0].getElementsByTagName('span');
-      var totalPageStr = totalPage[0].text;
-      totalPageStr.replaceAllMapped(RegExp(r'\s+(\d+)\s+'), (match) {
-        totalPageStr = '${match.group(1)}';
-        return '${match.group(1)}';
-      });
-      var totalPageInt = int.parse(totalPageStr);
-
-      totalPageInt = (totalPageInt + 14) ~/ 15;
-      if (totalPageInt == 0) {
-        searchButtonText = "Search";
-        searchButtonEnabled = true;
-        setState(() {});
-        return ucsNoList.length;
-      }
-
-      for (var i = 1; i < totalPageInt + 1; i++) {
-        var ucspage = await Requests.get(url + i.toString());
-        dom.Document document = parser.parse(ucspage.content());
-        var ucslist = document.getElementsByTagName('tr');
-
-        for (var j = 1; j < ucslist.length; j++) {
-          var songTitleParsed =
-              ucslist[j].getElementsByClassName('share_song_title')[0].text;
-          var stepArtistParsed = ucslist[j]
-              .getElementsByClassName('share_stepmaker')[0]
-              .text
-              .replaceAll(' ', '');
-          var stepLvParsed = ucslist[j]
-              .getElementsByClassName('share_level')[0]
-              .getElementsByTagName('span')[0]
-              .attributes['class'];
-          var ucsNoParsed = ucslist[j]
-              .getElementsByClassName('btnaddslot_ucs btnAddtoUCSSLOT')[0]
-              .attributes['data-ucs_id'];
-
-          if (stepLvParsed.contains('single')) {
-            stepLvParsed = ('S${stepLvParsed.substring(22)}');
-          } else if (stepLvParsed.contains('sinper')) {
-            stepLvParsed = ('SP${stepLvParsed.substring(22)}');
-          } else if (stepLvParsed.contains('double')) {
-            stepLvParsed = ('D${stepLvParsed.substring(22)}');
-          } else if (stepLvParsed.contains('douper')) {
-            stepLvParsed = ('DP${stepLvParsed.substring(22)}');
-          } else {
-            stepLvParsed = ('CO-OPx${stepLvParsed.substring(21)}');
-          }
-
-          if (stepArtistParsed
-              .toLowerCase()
-              .contains(_stepArtistController.text.toLowerCase())) {
-            if (stepLvParsed
-                .toLowerCase()
-                .contains(_stepLvController.text.toLowerCase())) {
-              var idx = songTitleList.length;
-              songTitleList.insert(idx, songTitleParsed);
-              stepArtistList.insert(idx, stepArtistParsed);
-              stepLvList.insert(idx, stepLvParsed);
-              ucsNoList.insert(idx, ucsNoParsed);
-            }
-          }
-        }
-        if (i == totalPageInt) {
-          try {
-            var nextUrl = document.getElementsByClassName('pg_page pg_end');
-            var nextUrlString = nextUrl[0].attributes['href'].toString();
-            nextUrlString =
-                nextUrlString.substring(1, nextUrlString.length - 1);
-            searchUCS('http://www.piugame.com/bbs$nextUrlString');
-          } on RangeError {
-            setState(
-              () {
-                searchButtonText = "Search";
-                searchButtonEnabled = true;
-              },
-            );
-            return ucsNoList.length;
-          }
-        }
-      }
+    var ucs = await Requests.get(
+      'http://13.209.41.47:5000/getucs',
+      queryParameters: {'songTitle': songTitle, 'stepMaker': stepArtist, 'songLv': stepLv},
+    );
+    var ucsList = ucs.json();
+    var idx = 0;
+    for (var ucsData in ucsList) {
+      songTitleList.insert(idx, ucsData[1]);
+      stepArtistList.insert(idx, ucsData[4]);
+      stepLvList.insert(idx, ucsData[3]);
+      ucsNoList.insert(idx, ucsData[0].toString());
+      idx++;
     }
-
-    if (songTitle.length > 2) {
-      searchUCS(
-          "http://www.piugame.com/bbs/board.php?bo_table=ucs&sfl=ucs_song_no&stx=$songTitle&page=");
-    } else {
-      searchUCS(
-          "http://www.piugame.com/bbs/board.php?bo_table=ucs&sfl=wr_name&stx=$stepArtist&page=");
-    }
+    searchButtonText = "Search";
+    searchButtonEnabled = true;
+    setState(() {});
   }
 
   var searchButtonText = "Search";
@@ -239,7 +160,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                   child: Text(searchButtonText),
                   onPressed: () async {
                     FocusScope.of(context).unfocus();
-                    if (_songTitleController.text.length > 2 ||
+                    if (_songTitleController.text != '' ||
                         _stepArtistController.text != '') {
                       if (searchButtonEnabled) {
                         setState(
@@ -248,7 +169,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                             searchButtonText = 'Searching...';
                           },
                         );
-                        await searchUCSList(_songTitleController.text,
+                        await searchUCS(_songTitleController.text,
                             _stepArtistController.text, _stepLvController.text);
                       } else {
                         if (!Get.isSnackbarOpen) {
@@ -259,7 +180,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                     } else {
                       if (!Get.isSnackbarOpen) {
                         Get.snackbar('Warning!',
-                            'You Must Enter Song Title more than 3 letters\nOr Full Step Artist Name.');
+                            'You Must Enter Song Title Or Step Artist Name.');
                       }
                     }
                   },
