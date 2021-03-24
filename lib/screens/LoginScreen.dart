@@ -18,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isAutoLogin = false;
   bool _isRemember = false;
 
+  bool isLogin = false;
+
   final TextEditingController _emailController = new TextEditingController();
   final TextEditingController _pwController = new TextEditingController();
   var _pwFocusNode = FocusNode();
@@ -224,44 +226,49 @@ class _LoginScreenState extends State<LoginScreen> {
     String id = _emailController.text;
     String pw = _pwController.text;
 
-    if (id != '' && pw != '') {
-      String loginUrl = 'http://www.piugame.com/bbs/piu.login_check.php';
+    if (!isLogin) {
+      isLogin = true;
+      if (id != '' && pw != '') {
+        String loginUrl = 'http://www.piugame.com/bbs/piu.login_check.php';
 
-      var response = await Requests.post(
-        loginUrl,
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept':
-              'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-          'Accept-Encoding': "gzip, deflate",
-          'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
-          'Connection': 'keep-alive',
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Host': 'www.piugame.com',
-          'Origin': 'http://www.piugame.com',
-          'Referer': 'http://www.piugame.com/piu.xx/',
-          'Upgrade-Insecure-Requests': '1',
-        },
-        body: <String, String>{
-          'mb_id': id,
-          'mb_password': pw,
-        },
-      );
-
-      if (response.statusCode == 302) {
-        _savePref();
-        Get.offAll(
-          () => MainScreen(),
+        var response = await Requests.post(
+          loginUrl,
+          headers: <String, String>{
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept':
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'Accept-Encoding': "gzip, deflate",
+            'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Connection': 'keep-alive',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Host': 'www.piugame.com',
+            'Origin': 'http://www.piugame.com',
+            'Referer': 'http://www.piugame.com/piu.xx/',
+            'Upgrade-Insecure-Requests': '1',
+          },
+          body: <String, String>{
+            'mb_id': id,
+            'mb_password': pw,
+          },
         );
+
+        if (response.statusCode == 302) {
+          _savePref();
+          Get.offAll(
+                () => MainScreen(),
+          );
+        } else {
+          if (!Get.isSnackbarOpen) {
+            Get.snackbar(
+                'Login Failure!', 'Please Check your Email & Password.');
+          }
+        }
       } else {
         if (!Get.isSnackbarOpen) {
-          Get.snackbar('Login Failure!', 'Please Check your Email & Password.');
+          Get.snackbar('Login Failure!', 'Please Fill your Email & Password.');
         }
       }
-    } else {
-      if (!Get.isSnackbarOpen) {
-        Get.snackbar('Login Failure!', 'Please Fill your Email & Password.');
-      }
+      isLogin = false;
     }
   }
 
