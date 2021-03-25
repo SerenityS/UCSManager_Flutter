@@ -198,27 +198,28 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
     return WillPopScope(
       onWillPop: () async {
         final value = await showDialog<bool>(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text('Exit?'),
-                content: Text('Are You Sure Want to Exit?'),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('NO'),
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                  ),
-                  TextButton(
-                    child: Text('EXIT'),
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                  ),
-                ],
-              );
-            });
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Exit?'),
+              content: Text('Are You Sure Want to Exit?'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('NO'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+                TextButton(
+                  child: Text('EXIT'),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+              ],
+            );
+          },
+        );
         return value == true;
       },
       child: Scaffold(

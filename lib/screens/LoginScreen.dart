@@ -37,16 +37,10 @@ class _LoginScreenState extends State<LoginScreen> {
           _emailController.text = _pref.read('email');
           _pwController.text = _pref.read('pw');
           _isRemember = true;
+          if (_pref.read('isAutoLogin') == 'true') _isAutoLogin = true;
         },
       );
-      if (_pref.read('isAutoLogin') == 'true') {
-        setState(
-          () {
-            _isAutoLogin = true;
-          },
-        );
-        await getLogin();
-      }
+      if (_pref.read('isAutoLogin') == 'true') await getLogin();
     }
   }
 
@@ -236,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
           headers: <String, String>{
             'Content-Type': 'application/x-www-form-urlencoded',
             'Accept':
-            'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             'Accept-Encoding': "gzip, deflate",
             'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
             'Connection': 'keep-alive',
@@ -255,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (response.statusCode == 302) {
           _savePref();
           Get.offAll(
-                () => MainScreen(),
+            () => MainScreen(),
           );
         } else {
           if (!Get.isSnackbarOpen) {

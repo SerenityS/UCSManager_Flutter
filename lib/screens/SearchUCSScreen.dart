@@ -68,7 +68,11 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
     ucsNoList.clear();
     var ucs = await Requests.get(
       'http://13.209.41.47:5000/getucs',
-      queryParameters: {'songTitle': songTitle, 'stepMaker': stepArtist, 'songLv': stepLv},
+      queryParameters: {
+        'songTitle': songTitle,
+        'stepMaker': stepArtist,
+        'songLv': stepLv
+      },
     );
     var ucsList = ucs.json();
     for (var ucsData in ucsList) {
@@ -77,9 +81,13 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
       stepLvList.insert(0, ucsData[3]);
       ucsNoList.insert(0, ucsData[0].toString());
     }
-    searchButtonText = "Search";
-    searchButtonEnabled = true;
-    setState(() {});
+
+    setState(
+      () {
+        searchButtonText = "Search";
+        searchButtonEnabled = true;
+      },
+    );
   }
 
   var searchButtonText = "Search";

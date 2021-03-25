@@ -27,7 +27,6 @@ class PIUApi {
         'work_type': 'AddtoUCSSLOT',
       },
     );
-
     return response.content();
   }
 
