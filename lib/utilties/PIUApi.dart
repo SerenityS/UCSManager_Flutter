@@ -6,8 +6,8 @@ import 'package:requests/requests.dart';
 class PIUApi {
   final _pref = GetStorage();
 
-  var apiUrl = 'http://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
-  var myUcsUrl = 'http://www.piugame.com/piu.ucs/ucs.my_ucs/ucs.my_upload.php';
+  final String apiUrl = 'http://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
+  final String myUcsUrl = 'http://www.piugame.com/piu.ucs/ucs.my_ucs/ucs.my_upload.php';
 
   Future _saveUCSDataPref(songTitleList, stepArtistList, ucsNoList) async {
     List<String> songTitleStringList = songTitleList.cast<String>();
