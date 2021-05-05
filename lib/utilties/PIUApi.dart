@@ -6,8 +6,12 @@ import 'package:requests/requests.dart';
 class PIUApi {
   final _pref = GetStorage();
 
-  final String apiUrl = 'http://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
-  final String myUcsUrl = 'http://www.piugame.com/piu.ucs/ucs.my_ucs/ucs.my_upload.php';
+  final String loginUrl = 'http://www.piugame.com/bbs/piu.login_check.php';
+
+  final String apiUrl =
+      'http://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
+  final String myUcsUrl =
+      'http://www.piugame.com/piu.ucs/ucs.my_ucs/ucs.my_upload.php';
 
   Future _saveUCSDataPref(songTitleList, stepArtistList, ucsNoList) async {
     List<String> songTitleStringList = songTitleList.cast<String>();
@@ -107,5 +111,29 @@ class PIUApi {
     } else {
       return false;
     }
+  }
+
+  Future<int> piuLogin(id, pw) async {
+    var response = await Requests.post(
+      loginUrl,
+      headers: <String, String>{
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept':
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'Accept-Encoding': "gzip, deflate",
+        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Host': 'www.piugame.com',
+        'Origin': 'http://www.piugame.com',
+        'Referer': 'http://www.piugame.com/piu.xx/',
+        'Upgrade-Insecure-Requests': '1',
+      },
+      body: <String, String>{
+        'mb_id': id,
+        'mb_password': pw,
+      },
+    );
+    return response.statusCode;
   }
 }
