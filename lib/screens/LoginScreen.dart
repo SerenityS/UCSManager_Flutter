@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:requests/requests.dart';
 
+import 'package:ucs_manager/utilties/PIUApi.dart';
 import 'package:ucs_manager/utilties/constatns.dart';
 import 'package:ucs_manager/screens/MainScreen.dart';
 
@@ -223,30 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!isLogin) {
       isLogin = true;
       if (id != '' && pw != '') {
-        String loginUrl = 'http://www.piugame.com/bbs/piu.login_check.php';
-
-        var response = await Requests.post(
-          loginUrl,
-          headers: <String, String>{
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept':
-                'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-            'Accept-Encoding': "gzip, deflate",
-            'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Connection': 'keep-alive',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Host': 'www.piugame.com',
-            'Origin': 'http://www.piugame.com',
-            'Referer': 'http://www.piugame.com/piu.xx/',
-            'Upgrade-Insecure-Requests': '1',
-          },
-          body: <String, String>{
-            'mb_id': id,
-            'mb_password': pw,
-          },
-        );
-
-        if (response.statusCode == 302) {
+        if (await PIUApi().piuLogin(id, pw) == 302) {
           _savePref();
           Get.offAll(
             () => MainScreen(),
