@@ -4,6 +4,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
+import 'package:ucs_manager/screens/FavoriteUCSScreen.dart';
 import 'package:ucs_manager/screens/LoginScreen.dart';
 import 'package:ucs_manager/screens/SearchUCSScreen.dart';
 import 'package:ucs_manager/utilties/PIUApi.dart';
@@ -297,6 +298,18 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               onTap: () {
                 Get.to(
                   () => SearchUCSScreen(),
+                );
+              },
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.favorite),
+              backgroundColor: Colors.pink,
+              foregroundColor: Colors.white,
+              label: 'Favorite UCS',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () {
+                Get.to(
+                      () => FavoriteUCSScreen(),
                 );
               },
             ),

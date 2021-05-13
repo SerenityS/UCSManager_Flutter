@@ -23,6 +23,46 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
     super.dispose();
   }
 
+  addFavoriteAlert(context, index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('ADD Favorite'),
+          content: Text('Are You Sure Want To ADD Favorite?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text("NO"),
+              onPressed: () {
+                Get.back();
+              },
+            ),
+            TextButton(
+              child: Text("YES"),
+              onPressed: () async {
+                bool result = await PIUApi().addFavoriteUCS([
+                  ucsNoList[index],
+                  songTitleList[index],
+                  stepArtistList[index],
+                  stepLvList[index]
+                ]);
+                Get.back();
+                if(result == true) {
+                  Get.snackbar('UCS Manager',
+                      'Successfully Add Favorite! / UCS No : ${ucsNoList[index]}.');
+                }
+                else {
+                  Get.snackbar('UCS Manager',
+                      'Already in Favorite! / UCS No : ${ucsNoList[index]}.');
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   addUCSAlert(context, index) {
     showDialog(
       context: context,
@@ -206,6 +246,9 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                         child: InkWell(
                           onTap: () {
                             addUCSAlert(context, index);
+                          },
+                          onLongPress: () {
+                            addFavoriteAlert(context, index);
                           },
                           child: Column(
                             children: <Widget>[

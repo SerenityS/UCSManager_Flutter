@@ -23,6 +23,20 @@ class PIUApi {
     await _pref.write('ucsNoList', ucsNoStringList);
   }
 
+  Future addFavoriteUCS(ucsData) async {
+    List favoriteUcsList = await _pref.read('favoriteUcsList');
+    if (favoriteUcsList == null) {
+      favoriteUcsList = [ucsData];
+    } else {
+      for (List no in favoriteUcsList) {
+        if (no[0] == ucsData[0]) return false;
+      }
+      favoriteUcsList.add(ucsData);
+    }
+    await _pref.write('favoriteUcsList', favoriteUcsList);
+    return true;
+  }
+
   Future<String> addUCS(ucsNo) async {
     var response = await Requests.get(
       apiUrl,
@@ -82,6 +96,13 @@ class PIUApi {
     }
     await _saveUCSDataPref(songTitleList, stepArtistList, ucsNoList);
     return s[1].getElementsByClassName('my_list_title').length;
+  }
+
+  Future removeFavoriteUCS(index) async {
+    List favoriteUcsList = await _pref.read('favoriteUcsList');
+    favoriteUcsList.removeAt(index);
+    await _pref.write('favoriteUcsList', favoriteUcsList);
+    return true;
   }
 
   Future<String> removeUCS(index) async {
