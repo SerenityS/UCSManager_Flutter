@@ -99,86 +99,74 @@ class _FavoriteUCSScreenState extends State<FavoriteUCSScreen> {
             future: _getFavoriteData(),
             builder: (context, snapshot) {
               if (snapshot.hasData == false) {
-                return CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Error: ${snapshot.error}',
-                    style: TextStyle(fontSize: 15),
+                return Column(children: [
+                  Expanded(
+                    child: Align(
+                      alignment: FractionalOffset.center,
+                      child: Text(
+                        "No Favorite UCS.",
+                        style: TextStyle(fontSize: 30),
+                      ),
+                    ),
                   ),
-                );
+                  SizedBox(
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: Column(
+                        children: [
+                          Text(
+                            "Made by qwertycvb with Pump It Up Gallery.",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(height: 8.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ]);
               } else {
-                if (snapshot.data == 0) {
-                  return Column(children: [
-                    Expanded(
-                      child: Align(
-                        alignment: FractionalOffset.center,
-                        child: Text(
-                          "No Favorite UCS.",
-                          style: TextStyle(fontSize: 30),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      child: Align(
-                        alignment: FractionalOffset.bottomCenter,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Made by qwertycvb with Pump It Up Gallery.",
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            SizedBox(height: 8.0),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]);
-                } else {
-                  return ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: BorderSide(
-                              color: Colors.grey.withOpacity(0.2),
-                              width: 1,
-                            ),
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              addUCSAlert(context, index);
-                            },
-                            onLongPress: () {
-                              removeFavoriteAlert(context, index);
-                            },
-                            child: Column(
-                              children: <Widget>[
-                                SizedBox(height: 8.0),
-                                Text(
-                                  favoriteUcsList[index][0],
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                Text(
-                                  "${favoriteUcsList[index][1]} ${favoriteUcsList[index][3]}",
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                Text(
-                                  favoriteUcsList[index][2],
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                SizedBox(height: 8.0),
-                              ],
-                            ),
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                            color: Colors.grey.withOpacity(0.2),
+                            width: 1,
                           ),
                         ),
-                      );
-                    },
-                  );
-                }
+                        child: InkWell(
+                          onTap: () {
+                            addUCSAlert(context, index);
+                          },
+                          onLongPress: () {
+                            removeFavoriteAlert(context, index);
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 8.0),
+                              Text(
+                                favoriteUcsList[index][0],
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                "${favoriteUcsList[index][1]} ${favoriteUcsList[index][3]}",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                favoriteUcsList[index][2],
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              SizedBox(height: 8.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
               }
             },
           ),
