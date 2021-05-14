@@ -28,8 +28,9 @@ class PIUApi {
     if (favoriteUcsList == null) {
       favoriteUcsList = [ucsData];
     } else {
-      for (List no in favoriteUcsList) {
-        if (no[0] == ucsData[0]) return false;
+      for (List data in favoriteUcsList) {
+        if (data.length == 4) data.add('');
+        if (data[0] == ucsData[0]) return false;
       }
       favoriteUcsList.add(ucsData);
     }
@@ -96,6 +97,13 @@ class PIUApi {
     }
     await _saveUCSDataPref(songTitleList, stepArtistList, ucsNoList);
     return s[1].getElementsByClassName('my_list_title').length;
+  }
+
+  Future modifyFavoriteMemo(index, memo) async {
+    List favoriteUcsList = await _pref.read('favoriteUcsList');
+    favoriteUcsList[index][4] = memo;
+    await _pref.write('favoriteUcsList', favoriteUcsList);
+    return true;
   }
 
   Future removeFavoriteUCS(index) async {

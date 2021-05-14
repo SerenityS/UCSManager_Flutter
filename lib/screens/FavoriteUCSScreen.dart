@@ -16,27 +16,31 @@ class _FavoriteUCSScreenState extends State<FavoriteUCSScreen> {
 
   List favoriteUcsList;
 
+  TextEditingController _textFieldController = TextEditingController();
+
+  @override
+  void dispose() {
+    _textFieldController.dispose();
+    super.dispose();
+  }
+
   Future _getFavoriteData() async {
     favoriteUcsList = await _pref.read('favoriteUcsList');
     return favoriteUcsList;
   }
 
-  addUCSAlert(context, index) {
+  Future favoriteMenuDialog(context, index) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('ADD UCS'),
-          content: Text('Are You Sure Want To ADD UCS?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text("NO"),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-            TextButton(
-              child: Text("YES"),
+        return SimpleDialog(
+          title: Text("Favorite UCS Menu"),
+          children: [
+            SimpleDialogOption(
+              child: Container(
+                padding: EdgeInsets.all(5),
+                child: Text("ADD UCS to UCS Slot"),
+              ),
               onPressed: () async {
                 var result = await PIUApi().addUCS(favoriteUcsList[index][0]);
                 Get.back();
@@ -49,33 +53,86 @@ class _FavoriteUCSScreenState extends State<FavoriteUCSScreen> {
                 }
               },
             ),
+            SimpleDialogOption(
+              child: Container(
+                padding: EdgeInsets.all(5),
+                child: Text("Modify Memo"),
+              ),
+              onPressed: () async {
+                addUCSAlert(context, index);
+              },
+            ),
+            SimpleDialogOption(
+              child: Container(
+                padding: EdgeInsets.all(5),
+                child: Text("Remove UCS from Favorite"),
+              ),
+              onPressed: () {
+                removeFavoriteAlert(context, index);
+              },
+            )
           ],
         );
       },
     );
   }
 
-  removeFavoriteAlert(context, index) {
-    showDialog(
+  Future addUCSAlert(context, index) async {
+    _textFieldController.clear();
+    _textFieldController.text = favoriteUcsList[index][4];
+    return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
-          title: Text('Remove Favorite'),
-          content: Text("Are You Sure Want To Remove this Favorite?"),
-          actions: [
+          title: Text('Modify Memo'),
+          content: TextField(
+            controller: _textFieldController,
+            decoration: InputDecoration(hintText: "Memo"),
+          ),
+          actions: <Widget>[
             TextButton(
-              child: Text("NO"),
+              child: Text('CANCEL'),
               onPressed: () {
                 Get.back();
               },
             ),
             TextButton(
-              child: Text("YES"),
+              child: Text('OK'),
+              onPressed: () async {
+                await PIUApi()
+                    .modifyFavoriteMemo(index, _textFieldController.text);
+                setState(() {});
+                Get.back();
+                Get.back();
+                Get.snackbar('UCS Manager', 'Successfully Modify Memo.');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future removeFavoriteAlert(context, index) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Remove Favorite UCS'),
+          content: Text("Are You Sure Want To Remove Favorite?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text('CANCEL'),
+              onPressed: () {
+                Get.back();
+              },
+            ),
+            TextButton(
+              child: Text('OK'),
               onPressed: () async {
                 await PIUApi().removeFavoriteUCS(index);
-                setState(() {
-                  FavoriteUCSScreen();
-                });
+                setState(() {});
+                Get.back();
                 Get.back();
                 Get.snackbar('UCS Manager', 'Successfully Remove Favorite.');
               },
@@ -139,10 +196,7 @@ class _FavoriteUCSScreenState extends State<FavoriteUCSScreen> {
                         ),
                         child: InkWell(
                           onTap: () {
-                            addUCSAlert(context, index);
-                          },
-                          onLongPress: () {
-                            removeFavoriteAlert(context, index);
+                            favoriteMenuDialog(context, index);
                           },
                           child: Column(
                             children: <Widget>[
@@ -159,6 +213,14 @@ class _FavoriteUCSScreenState extends State<FavoriteUCSScreen> {
                                 favoriteUcsList[index][2],
                                 style: TextStyle(fontSize: 20),
                               ),
+                              if (favoriteUcsList[index][4] != '')
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                                  child: Text(
+                                    favoriteUcsList[index][4],
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
                               SizedBox(height: 8.0),
                             ],
                           ),

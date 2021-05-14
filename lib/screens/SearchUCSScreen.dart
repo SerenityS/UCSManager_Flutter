@@ -44,14 +44,14 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                   ucsNoList[index],
                   songTitleList[index],
                   stepArtistList[index],
-                  stepLvList[index]
+                  stepLvList[index],
+                  '',
                 ]);
                 Get.back();
-                if(result == true) {
+                if (result == true) {
                   Get.snackbar('UCS Manager',
                       'Successfully Add Favorite! / UCS No : ${ucsNoList[index]}.');
-                }
-                else {
+                } else {
                   Get.snackbar('UCS Manager',
                       'Already in Favorite! / UCS No : ${ucsNoList[index]}.');
                 }
