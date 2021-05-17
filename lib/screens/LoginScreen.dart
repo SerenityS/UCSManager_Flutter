@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'package:ucs_manager/utilties/PIUApi.dart';
-import 'package:ucs_manager/utilties/constatns.dart';
+import 'package:ucs_manager/utilities/PIUApi.dart';
+import 'package:ucs_manager/utilities/constatns.dart';
 import 'package:ucs_manager/screens/MainScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,9 +20,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isLogin = false;
 
-  final TextEditingController _emailController = new TextEditingController();
-  final TextEditingController _pwController = new TextEditingController();
-  var _pwFocusNode = FocusNode();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _pwController = TextEditingController();
+  final _pwFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _loadPref();
   }
 
-  _loadPref() async {
+  void _loadPref() async {
     if (_pref.read('isRemember') == 'true') {
       setState(
         () {
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  _savePref() async {
+  void _savePref() async {
     await _pref.write('email', _emailController.text);
     await _pref.write('pw', _pwController.text);
     await _pref.write('isAutoLogin', _isAutoLogin.toString());
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       height: 20.0,
       child: Row(
-        children: <Widget>[
+        children: [
           Theme(
             data: ThemeData(unselectedWidgetColor: Colors.white),
             child: Checkbox(
@@ -217,15 +217,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future getLogin() async {
-    String id = _emailController.text;
-    String pw = _pwController.text;
+    var id = _emailController.text;
+    var pw = _pwController.text;
 
     if (!isLogin) {
       isLogin = true;
       if (id != '' && pw != '') {
         if (await PIUApi().piuLogin(id, pw) == 302) {
           _savePref();
-          Get.offAll(
+          await Get.offAll(
             () => MainScreen(),
           );
         } else {

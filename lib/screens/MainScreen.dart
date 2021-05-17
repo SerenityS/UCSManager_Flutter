@@ -3,11 +3,11 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
 import 'package:ucs_manager/screens/FavoriteUCSScreen.dart';
 import 'package:ucs_manager/screens/LoginScreen.dart';
 import 'package:ucs_manager/screens/SearchUCSScreen.dart';
-import 'package:ucs_manager/utilties/PIUApi.dart';
+import 'package:ucs_manager/utilities/PIUApi.dart';
+
 import 'UCSListScreen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
 
   bool isDarkMode = false;
 
-  TextEditingController _textFieldController = TextEditingController();
+  final TextEditingController _textFieldController = TextEditingController();
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
     Get.snackbar('UCS Manager', msg, colorText: Colors.white);
   }
 
-  logoutAlert(context) {
+  void logoutAlert(context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -48,19 +48,19 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           content: Text('Are You Sure Want to Logout?'),
           actions: <Widget>[
             TextButton(
-              child: Text("NO"),
               onPressed: () {
                 Get.back();
               },
+              child: Text('NO'),
             ),
             TextButton(
-              child: Text("YES"),
               onPressed: () async {
-                _pref.write('isRemember', 'false');
-                Get.offAll(
+                await _pref.write('isRemember', 'false');
+                await Get.offAll(
                   () => LoginScreen(),
                 );
               },
+              child: Text('YES'),
             ),
           ],
         );
@@ -77,19 +77,18 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           title: Text('ADD UCS'),
           content: TextField(
             controller: _textFieldController,
-            decoration: InputDecoration(hintText: "UCS No"),
+            decoration: InputDecoration(hintText: 'UCS No'),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('CANCEL'),
               onPressed: () {
                 Get.back();
               },
+              child: Text('CANCEL'),
             ),
             TextButton(
-              child: Text('OK'),
               onPressed: () async {
-                var ucsNoList = _textFieldController.text.split(",");
+                var ucsNoList = _textFieldController.text.split(',');
                 if (ucsNoList[0] != '') {
                   var ucsAddSuccess = '';
                   var ucsAddFailure = '';
@@ -118,6 +117,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                   Get.back();
                 }
               },
+              child: Text('OK'),
             ),
           ],
         );
@@ -125,7 +125,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 
-  buildUCSAlert(context) {
+  void buildUCSAlert(context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -134,13 +134,12 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           content: Text('Are You Sure Want To Build UCS PACK?'),
           actions: <Widget>[
             TextButton(
-              child: Text("NO"),
               onPressed: () {
                 Get.back();
               },
+              child: Text('NO'),
             ),
             TextButton(
-              child: Text("YES"),
               onPressed: () async {
                 var result = await PIUApi().buildUCS();
                 Get.back();
@@ -150,6 +149,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                   printSnackBar(result);
                 }
               },
+              child: Text('YES'),
             ),
           ],
         );
@@ -157,7 +157,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 
-  removeAllUCSAlert(context) {
+  void removeAllUCSAlert(context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -166,13 +166,12 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           content: Text('Are You Sure Want To Remove All UCS?'),
           actions: <Widget>[
             TextButton(
-              child: Text("NO"),
               onPressed: () {
                 Get.back();
               },
+              child: Text('NO'),
             ),
             TextButton(
-              child: Text("YES"),
               onPressed: () async {
                 var result = await PIUApi().removeAllUCS();
                 Get.back();
@@ -187,6 +186,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                   printSnackBar('You don\'t have Any UCS to Remove.');
                 }
               },
+              child: Text('YES'),
             ),
           ],
         );
@@ -206,16 +206,16 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               content: Text('Are You Sure Want to Exit?'),
               actions: <Widget>[
                 TextButton(
-                  child: Text('NO'),
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
+                  child: Text('NO'),
                 ),
                 TextButton(
-                  child: Text('EXIT'),
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
+                  child: Text('EXIT'),
                 ),
               ],
             );
@@ -229,7 +229,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             'UCS Manager',
           ),
           actions: [
-            new IconButton(
+            IconButton(
               icon: Image.asset(
                 'assets/icon/logout.png',
                 color: Colors.white,
@@ -309,7 +309,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () {
                 Get.to(
-                      () => FavoriteUCSScreen(),
+                  () => FavoriteUCSScreen(),
                 );
               },
             ),

@@ -1,5 +1,4 @@
 import 'package:html/parser.dart' as parser;
-import 'package:html/dom.dart' as dom;
 import 'package:get_storage/get_storage.dart';
 import 'package:requests/requests.dart';
 
@@ -7,11 +6,10 @@ class PIUApi {
   final _pref = GetStorage();
 
   final String loginUrl = 'http://www.piugame.com/bbs/piu.login_check.php';
-
-  final String apiUrl =
-      'http://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
   final String myUcsUrl =
       'http://www.piugame.com/piu.ucs/ucs.my_ucs/ucs.my_upload.php';
+  final String ucsApiUrl =
+      'http://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
 
   Future _saveUCSDataPref(songTitleList, stepArtistList, ucsNoList) async {
     List<String> songTitleStringList = songTitleList.cast<String>();
@@ -24,12 +22,11 @@ class PIUApi {
   }
 
   Future addFavoriteUCS(ucsData) async {
-    List favoriteUcsList = await _pref.read('favoriteUcsList');
+    var favoriteUcsList = await _pref.read('favoriteUcsList');
     if (favoriteUcsList == null) {
       favoriteUcsList = [ucsData];
     } else {
       for (List data in favoriteUcsList) {
-        if (data.length == 4) data.add('');
         if (data[0] == ucsData[0]) return false;
       }
       favoriteUcsList.add(ucsData);
@@ -40,7 +37,7 @@ class PIUApi {
 
   Future<String> addUCS(ucsNo) async {
     var response = await Requests.get(
-      apiUrl,
+      ucsApiUrl,
       queryParameters: <String, String>{
         'ucs_id': ucsNo,
         'work_type': 'AddtoUCSSLOT',
@@ -53,7 +50,7 @@ class PIUApi {
     var ucsNoList = _pref.read('ucsNoList');
     if (ucsNoList.length != 0) {
       var response = await Requests.get(
-        apiUrl,
+        ucsApiUrl,
         queryParameters: <String, String>{
           'work_type': 'MakeUCSPack',
         },
@@ -63,7 +60,7 @@ class PIUApi {
     return 'You Can\'t Build when You Don\'t have Any UCS.';
   }
 
-  Future<int> getUCSData() async {
+  Future<int> getMyUCS() async {
     var songTitle;
     var stepArtist;
     var ucsNo;
@@ -73,7 +70,7 @@ class PIUApi {
     var ucsNoList = [];
 
     var response = await Requests.get(myUcsUrl);
-    dom.Document document = parser.parse(response.content());
+    var document = parser.parse(response.content());
     var s = document.getElementsByClassName('my_list');
 
     for (var i = 0;
@@ -100,29 +97,17 @@ class PIUApi {
   }
 
   Future modifyFavoriteMemo(index, memo) async {
-    List favoriteUcsList = await _pref.read('favoriteUcsList');
+    var favoriteUcsList = await _pref.read('favoriteUcsList');
     favoriteUcsList[index][4] = memo;
     await _pref.write('favoriteUcsList', favoriteUcsList);
     return true;
   }
 
   Future removeFavoriteUCS(index) async {
-    List favoriteUcsList = await _pref.read('favoriteUcsList');
+    var favoriteUcsList = await _pref.read('favoriteUcsList');
     favoriteUcsList.removeAt(index);
     await _pref.write('favoriteUcsList', favoriteUcsList);
     return true;
-  }
-
-  Future<String> removeUCS(index) async {
-    var ucsNoList = _pref.read('ucsNoList');
-    var response = await Requests.get(
-      apiUrl,
-      queryParameters: <String, String>{
-        'data_no': ucsNoList[index],
-        'work_type': 'RemovetoUCSSLOT2',
-      },
-    );
-    return response.content();
   }
 
   Future removeAllUCS() async {
@@ -130,7 +115,7 @@ class PIUApi {
     if (ucsNoList.length != 0) {
       for (var i = 0; i < ucsNoList.length; i++) {
         await Requests.get(
-          apiUrl,
+          ucsApiUrl,
           queryParameters: <String, String>{
             'data_no': ucsNoList[i],
             'work_type': 'RemovetoUCSSLOT2',
@@ -142,6 +127,18 @@ class PIUApi {
     }
   }
 
+  Future<String> removeUCS(index) async {
+    var ucsNoList = _pref.read('ucsNoList');
+    var response = await Requests.get(
+      ucsApiUrl,
+      queryParameters: <String, String>{
+        'data_no': ucsNoList[index],
+        'work_type': 'RemovetoUCSSLOT2',
+      },
+    );
+    return response.content();
+  }
+
   Future<int> piuLogin(id, pw) async {
     var response = await Requests.post(
       loginUrl,
@@ -149,10 +146,9 @@ class PIUApi {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept':
             'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'Accept-Encoding': "gzip, deflate",
+        'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
         'Connection': 'keep-alive',
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Host': 'www.piugame.com',
         'Origin': 'http://www.piugame.com',
         'Referer': 'http://www.piugame.com/piu.xx/',

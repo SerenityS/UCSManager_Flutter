@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 
-import 'package:ucs_manager/utilties/PIUApi.dart';
+import 'package:ucs_manager/utilities/PIUApi.dart';
 
 class UCSListScreen extends StatefulWidget {
   @override
@@ -15,8 +15,8 @@ class _UCSListScreen extends State<UCSListScreen> {
   List<String> songTitleList;
   List<String> stepArtistList;
 
-  getUCSList() async {
-    await PIUApi().getUCSData();
+  Future<int> _getUCSList() async {
+    await PIUApi().getMyUCS();
 
     songTitleList = _pref.read('songTitleList');
     stepArtistList = _pref.read('stepArtistList');
@@ -24,27 +24,26 @@ class _UCSListScreen extends State<UCSListScreen> {
     return songTitleList.length;
   }
 
-  removeUCSAlert(context, index) {
+  void removeUCSAlert(context, index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Remove UCS'),
-          content: Text("Are You Sure Want To Remove UCS?"),
+          content: Text('Are You Sure Want To Remove UCS?'),
           actions: [
             TextButton(
-              child: Text("NO"),
               onPressed: () {
                 Get.back();
               },
+              child: Text('NO'),
             ),
             TextButton(
-              child: Text("YES"),
               onPressed: () async {
                 var result = await PIUApi().removeUCS(index);
                 setState(
                   () {
-                    getUCSList();
+                    _getUCSList();
                   },
                 );
                 Get.back();
@@ -54,6 +53,7 @@ class _UCSListScreen extends State<UCSListScreen> {
                   Get.snackbar('UCS Manager', 'Can\'t Remove UCS.');
                 }
               },
+              child: Text('YES'),
             ),
           ],
         );
@@ -67,7 +67,7 @@ class _UCSListScreen extends State<UCSListScreen> {
       margin: EdgeInsets.only(top: 4.0, bottom: 4.0),
       child: Center(
         child: FutureBuilder(
-          future: getUCSList(),
+          future: _getUCSList(),
           builder: (context, snapshot) {
             if (snapshot.hasData == false) {
               return CircularProgressIndicator();
@@ -86,7 +86,7 @@ class _UCSListScreen extends State<UCSListScreen> {
                     child: Align(
                       alignment: FractionalOffset.center,
                       child: Text(
-                        "No UCS.",
+                        'No UCS.',
                         style: TextStyle(fontSize: 30),
                       ),
                     ),
@@ -97,7 +97,7 @@ class _UCSListScreen extends State<UCSListScreen> {
                       child: Column(
                         children: [
                           Text(
-                            "Made by qwertycvb with Pump It Up Gallery.",
+                            'Made by qwertycvb with Pump It Up Gallery.',
                             style: TextStyle(fontSize: 15),
                           ),
                           SizedBox(height: 8.0),

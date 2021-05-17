@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:requests/requests.dart';
 
-import 'package:ucs_manager/utilties/PIUApi.dart';
+import 'package:ucs_manager/utilities/PIUApi.dart';
 
 class SearchUCSScreen extends StatefulWidget {
   @override
@@ -11,9 +11,9 @@ class SearchUCSScreen extends StatefulWidget {
 }
 
 class _SearchUCSScreen extends State<SearchUCSScreen> {
-  TextEditingController _songTitleController = new TextEditingController();
-  TextEditingController _stepArtistController = new TextEditingController();
-  TextEditingController _stepLvController = new TextEditingController();
+  final TextEditingController _songTitleController = TextEditingController();
+  final TextEditingController _stepArtistController = TextEditingController();
+  final TextEditingController _stepLvController = TextEditingController();
 
   @override
   void dispose() {
@@ -23,7 +23,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
     super.dispose();
   }
 
-  addFavoriteAlert(context, index) {
+  void addFavoriteAlert(context, index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -32,13 +32,12 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
           content: Text('Are You Sure Want To ADD Favorite?'),
           actions: <Widget>[
             TextButton(
-              child: Text("NO"),
               onPressed: () {
                 Get.back();
               },
+              child: Text('NO'),
             ),
             TextButton(
-              child: Text("YES"),
               onPressed: () async {
                 bool result = await PIUApi().addFavoriteUCS([
                   ucsNoList[index],
@@ -56,6 +55,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                       'Already in Favorite! / UCS No : ${ucsNoList[index]}.');
                 }
               },
+              child: Text('YES'),
             ),
           ],
         );
@@ -63,7 +63,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
     );
   }
 
-  addUCSAlert(context, index) {
+  void addUCSAlert(context, index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -72,13 +72,12 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
           content: Text('Are You Sure Want To ADD UCS?'),
           actions: <Widget>[
             TextButton(
-              child: Text("NO"),
               onPressed: () {
                 Get.back();
               },
+              child: Text('NO'),
             ),
             TextButton(
-              child: Text("YES"),
               onPressed: () async {
                 var result = await PIUApi().addUCS(ucsNoList[index]);
                 Get.back();
@@ -90,6 +89,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                       'Add UCS Failed! / UCS No : ${ucsNoList[index]}.');
                 }
               },
+              child: Text('YES'),
             ),
           ],
         );
@@ -101,7 +101,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
   var stepArtistList = [];
   var stepLvList = [];
   var ucsNoList = [];
-  searchUCS(songTitle, stepArtist, stepLv) async {
+  void searchUCS(songTitle, stepArtist, stepLv) async {
     songTitleList.clear();
     stepArtistList.clear();
     stepLvList.clear();
@@ -124,13 +124,13 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
 
     setState(
       () {
-        searchButtonText = "Search";
+        searchButtonText = 'Search';
         searchButtonEnabled = true;
       },
     );
   }
 
-  var searchButtonText = "Search";
+  var searchButtonText = 'Search';
   bool searchButtonEnabled = true;
   @override
   Widget build(BuildContext context) {
@@ -157,7 +157,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                     child: TextField(
                       controller: _songTitleController,
                       decoration: InputDecoration(
-                        hintText: "Song Title",
+                        hintText: 'Song Title',
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(14.0),
                       ),
@@ -176,7 +176,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                     child: TextField(
                       controller: _stepArtistController,
                       decoration: InputDecoration(
-                        hintText: "Step Artist",
+                        hintText: 'Step Artist',
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(14.0),
                       ),
@@ -195,7 +195,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                     child: TextField(
                       controller: _stepLvController,
                       decoration: InputDecoration(
-                        hintText: "Step Level",
+                        hintText: 'Step Level',
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(14.0),
                       ),
@@ -203,7 +203,6 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                   ),
                 ),
                 ElevatedButton(
-                  child: Text(searchButtonText),
                   onPressed: () async {
                     FocusScope.of(context).unfocus();
                     if (_songTitleController.text != '' ||
@@ -215,7 +214,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                             searchButtonText = 'Searching...';
                           },
                         );
-                        await searchUCS(_songTitleController.text,
+                        searchUCS(_songTitleController.text,
                             _stepArtistController.text, _stepLvController.text);
                       } else {
                         if (!Get.isSnackbarOpen) {
@@ -230,6 +229,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                       }
                     }
                   },
+                  child: Text(searchButtonText),
                 ),
                 Expanded(
                   child: ListView.builder(
@@ -251,7 +251,7 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
                             addFavoriteAlert(context, index);
                           },
                           child: Column(
-                            children: <Widget>[
+                            children: [
                               SizedBox(height: 5.0),
                               Text(
                                 ucsNoList[index],
