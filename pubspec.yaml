@@ -28,14 +28,16 @@ dependencies:
   get_storage:
 
   html: ^0.15.0
-  requests: ^3.3.0
+  requests:
+    git:
+      url: https://github.com/tlkops/requests
   flutter_speed_dial: ^3.0.5
   pedantic: ^1.11.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.8.0"
+  flutter_launcher_icons:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
