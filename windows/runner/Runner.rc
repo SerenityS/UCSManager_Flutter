@@ -89,14 +89,14 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.qwertycvb" "\0"
-            VALUE "FileDescription", "A new Flutter project." "\0"
-            VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "ucsmanager_flutter" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2021 com.qwertycvb. All rights reserved." "\0"
-            VALUE "OriginalFilename", "ucsmanager_flutter.exe" "\0"
-            VALUE "ProductName", "ucsmanager_flutter" "\0"
-            VALUE "ProductVersion", VERSION_AS_STRING "\0"
+            VALUE "CompanyName", "qwertycvb" "\0"
+            VALUE "FileDescription", "UCS Manager for Windows" "\0"
+            VALUE "FileVersion", "2.0.0" "\0"
+            VALUE "InternalName", "UCS Manager" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2021 qwertycvb All rights reserved." "\0"
+            VALUE "OriginalFilename", "UCSManager.exe" "\0"
+            VALUE "ProductName", "UCS Manager" "\0"
+            VALUE "ProductVersion", "2.0.0" "\0"
         END
     END
     BLOCK "VarFileInfo"
