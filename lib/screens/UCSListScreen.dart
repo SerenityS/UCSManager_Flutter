@@ -48,9 +48,9 @@ class _UCSListScreen extends State<UCSListScreen> {
                 );
                 Get.back();
                 if (result.contains('The file was deleted.')) {
-                  Get.snackbar('UCS Manager', 'Successfully Remove UCS.');
+                  Get.snackbar('UCS Manager', 'Successfully Remove UCS.', colorText: Colors.white);
                 } else {
-                  Get.snackbar('UCS Manager', 'Can\'t Remove UCS.');
+                  Get.snackbar('UCS Manager', 'Can\'t Remove UCS.', colorText: Colors.white);
                 }
               },
               child: Text('YES'),
