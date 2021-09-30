@@ -33,6 +33,7 @@ dependencies:
       url: https://github.com/tlkops/requests
   flutter_speed_dial: ^3.0.5
   pedantic: ^1.11.0
+  desktop_window: ^0.4.0
 
 dev_dependencies:
   flutter_test:

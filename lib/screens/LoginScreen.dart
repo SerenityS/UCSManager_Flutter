@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -27,7 +30,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    if (Platform.isWindows) {
+      _setWindowSize();
+    }
     _loadPref();
+  }
+
+  void _setWindowSize() async {
+    await DesktopWindow.setWindowSize(Size(550, 850));
+    await DesktopWindow.setMinWindowSize(Size(400, 600));
+    await DesktopWindow.setMaxWindowSize(Size(800, 1000));
   }
 
   void _loadPref() async {
