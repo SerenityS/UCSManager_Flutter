@@ -106,14 +106,26 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
     stepArtistList.clear();
     stepLvList.clear();
     ucsNoList.clear();
-    var ucs = await Requests.get(
-      'http://13.209.41.47:5000/getucs',
-      queryParameters: {
-        'songTitle': songTitle,
-        'stepMaker': stepArtist,
-        'songLv': stepLv
-      },
-    );
+
+    var ucs;
+    if (songTitle.contains('UCS') || songTitle.contains('ucs')) {
+      ucs = await Requests.get(
+        'http://ucs.qwertycvb.site:5000/getpack',
+        queryParameters: {
+          'pack': songTitle,
+        },
+      );
+    } else {
+      ucs = await Requests.get(
+        'http://ucs.qwertycvb.site:5000/getucs',
+        queryParameters: {
+          'songTitle': songTitle,
+          'stepMaker': stepArtist,
+          'songLv': stepLv
+        },
+      );
+    }
+
     var ucsList = ucs.json();
     for (var ucsData in ucsList) {
       songTitleList.insert(0, ucsData[1]);
