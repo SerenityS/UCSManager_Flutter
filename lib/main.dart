@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
           centerTitle: true,
           brightness: Brightness.dark,
           backgroundColor: Color(0xFF398AE5),
-          titleTextStyle: TextStyle(color: Colors.white),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w600),
         ),
       ),
       darkTheme: ThemeData(
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           centerTitle: true,
           brightness: Brightness.dark,
           backgroundColor: Color(0xFF398AE5),
-          titleTextStyle: TextStyle(color: Colors.white),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w600),
         ),
       ),
       title: 'UCS Manager',
