@@ -106,6 +106,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                       ucsAddFailure += '$ucsNo, ';
                     }
                   }
+                  Get.closeAllSnackbars();
                   Get.back();
                   if (ucsAddSuccess != '') {
                     setState(
@@ -148,6 +149,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             TextButton(
               onPressed: () async {
                 var result = await PIUApi().buildUCS();
+                Get.closeAllSnackbars();
                 Get.back();
                 if (result.contains('Registration is complete.')) {
                   printSnackBar('Successfully Build UCS Pack.');
@@ -180,6 +182,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             TextButton(
               onPressed: () async {
                 var result = await PIUApi().removeAllUCS();
+                Get.closeAllSnackbars();
                 Get.back();
                 if (result != false) {
                   setState(
