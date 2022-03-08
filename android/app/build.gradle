@@ -70,7 +70,7 @@ android {
         }
     }
 
-    ndkVersion "23.0.7123448"
+    ndkVersion "23.1.7779620"
 }
 
 flutter {
