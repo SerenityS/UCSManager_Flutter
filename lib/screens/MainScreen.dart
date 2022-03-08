@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -37,6 +39,10 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
 
   void printSnackBar(msg) {
     Get.snackbar('UCS Manager', msg, colorText: Colors.white);
+  }
+
+  FutureOr refreshScreen(dynamic) {
+    setState(() {});
   }
 
   void logoutAlert(context) {
@@ -298,7 +304,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               onTap: () {
                 Get.to(
                   () => SearchUCSScreen(),
-                );
+                ).then(refreshScreen);
               },
             ),
             SpeedDialChild(
@@ -310,7 +316,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               onTap: () {
                 Get.to(
                   () => FavoriteUCSScreen(),
-                );
+                ).then(refreshScreen);
               },
             ),
             SpeedDialChild(
