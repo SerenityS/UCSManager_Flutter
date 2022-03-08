@@ -5,11 +5,11 @@ import 'package:requests/requests.dart';
 class PIUApi {
   final _pref = GetStorage();
 
-  final String loginUrl = 'http://www.piugame.com/bbs/piu.login_check.php';
+  final String loginUrl = 'https://www.piugame.com/bbs/piu.login_check.php';
   final String myUcsUrl =
-      'http://www.piugame.com/piu.ucs/ucs.my_ucs/ucs.my_upload.php';
+      'https://www.piugame.com/piu.ucs/ucs.my_ucs/ucs.my_upload.php';
   final String ucsApiUrl =
-      'http://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
+      'https://www.piugame.com/piu.ucs/ucs.share/ucs.share.ajax.php';
 
   Future _saveUCSDataPref(songTitleList, stepArtistList, ucsNoList) async {
     List<String> songTitleStringList = songTitleList.cast<String>();
@@ -155,6 +155,7 @@ class PIUApi {
         'Upgrade-Insecure-Requests': '1',
       },
       body: <String, String>{
+        'url': 'https://piugame.com/piu.ucs/ucs.main.php',
         'mb_id': id,
         'mb_password': pw,
       },
