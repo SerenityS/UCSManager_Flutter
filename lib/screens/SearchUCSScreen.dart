@@ -109,14 +109,14 @@ class _SearchUCSScreen extends State<SearchUCSScreen> {
     var ucs;
     if (songTitle.contains('UCS') || songTitle.contains('ucs')) {
       ucs = await Requests.get(
-        'http://ucs.qwertycvb.site:5000/getpack',
+        'http://ucs.qwertycvb.com:5000/getpack',
         queryParameters: {
           'pack': songTitle,
         },
       );
     } else {
       ucs = await Requests.get(
-        'http://ucs.qwertycvb.site:5000/getucs',
+        'http://ucs.qwertycvb.com:5000/getucs',
         queryParameters: {
           'songTitle': songTitle,
           'stepMaker': stepArtist,
